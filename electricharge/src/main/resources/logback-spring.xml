@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- -scan:当此属性设置为true时，配置文件如果发生改变，将会被重新加载，默认值为true -scanPeriod:设置监测配置文件是否有修改的时间间隔，如果没有给出时间单位，默认单位是毫秒。 
+	- 当scan为true时，此属性生效。默认的时间间隔为1分钟 -debug:当此属性设置为true时，将打印出logback内部日志信息，实时查看logback运行状态。默认值为false。 
+	- - configuration 子节点为 appender、logger、root -->
+<configuration scan="true" scanPeriod="60 second" debug="false">
+
+	<!-- 定义不同环境下的日志级别 -->
+	<springProfile name="default">
+		<property name="LOG_HOME" value="./logs" />
+		<logger name="com" level="debug" />
+	</springProfile>
+	<springProfile name="test">
+		<property name="LOG_HOME" value="./logs" />
+		<logger name="com" level="debug" />
+	</springProfile>
+
+	<springProfile name="dev">
+		<property name="LOG_HOME" value="./logs" />
+		<logger name="com" level="debug" />
+	</springProfile>
+
+	<springProfile name="prod">
+		<property name="LOG_HOME" value="./data/logs" />
+		<logger name="com" level="INFO" />
+	</springProfile>
+
+
+	
+
+	<!-- 负责写日志,控制台日志 -->
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+
+		<!-- 一是把日志信息转换成字节数组,二是把字节数组写入到输出流 -->
+		<encoder>
+			<Pattern>[%d{yyyy-MM-dd HH:mm:ss.SSS}][%level][%thread]%logger{35}-%M:%msg%n</Pattern>
+			<charset>UTF-8</charset>
+		</encoder>
+	</appender>
+
+	<!-- 文件日志 -->
+	<appender name="DEBUG"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${LOG_HOME}/debug.log</file>
+		<!-- append: true,日志被追加到文件结尾; false,清空现存文件;默认是true -->
+		<append>true</append>
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<!-- LevelFilter: 级别过滤器，根据日志级别进行过滤 -->
+			<level>DEBUG</level>
+			<onMatch>ACCEPT</onMatch>
+			<onMismatch>DENY</onMismatch>
+		</filter>
+		<encoder>
+			<Pattern>[%d{yyyy-MM-dd HH:mm:ss.SSS}][%level][%thread]%logger{35}-%M:%msg%n</Pattern>
+			<charset>UTF-8</charset>
+		</encoder>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${LOG_HOME}/debug.%d{yyyy-MM-dd}.log
+			</fileNamePattern>
+			<!-- 保留 10天数据，默认无限 -->
+			<maxHistory>10</maxHistory>
+		</rollingPolicy>
+	</appender>
+
+	<!-- 滚动记录文件，先将日志记录到指定文件，当符合某个条件时，将日志记录到其他文件 -->
+	<appender name="INFO"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>${LOG_HOME}/info.log</File>
+
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<!-- LevelFilter: 级别过滤器，根据日志级别进行过滤 -->
+			<level>INFO</level>
+			<onMatch>ACCEPT</onMatch>
+			<onMismatch>DENY</onMismatch>
+		</filter>
+		
+		<encoder>
+			<Pattern>[%d{yyyy-MM-dd HH:mm:ss.SSS}][%level][%thread]%logger{35}-%M:%msg%n</Pattern>
+			<charset>UTF-8</charset>
+		</encoder>
+
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${LOG_HOME}/info.%d{yyyy-MM-dd}.log
+			</fileNamePattern>
+			<!-- 保留 30天数据，默认无限 -->
+			<maxHistory>30</maxHistory>
+		</rollingPolicy>
+	</appender>
+
+
+	<appender name="ERROR"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${LOG_HOME}/error.log</file>
+
+		<encoder>
+			<Pattern>[%d{yyyy-MM-dd HH:mm:ss.SSS}][%level][%thread]%logger{35}-%M:%msg%n</Pattern>
+			<charset>UTF-8</charset>
+		</encoder>
+		<!-- ThresholdFilter:临界值过滤器，过滤掉 TRACE 和 DEBUG 级别的日志 -->
+		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+			<level>ERROR</level>
+		</filter>
+
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${LOG_HOME}/error.%d{yyyy-MM-dd}.log
+			</fileNamePattern>
+			<!-- 保留 30天数据，默认无限 -->
+			<maxHistory>30</maxHistory>
+		</rollingPolicy>
+	</appender>
+
+	<!-- 异步输出 -->
+	<appender name="ASYNC" class="ch.qos.logback.classic.AsyncAppender">
+		<!-- 不丢失日志.默认的,如果队列的80%已满,则会丢弃TRACT、DEBUG、INFO级别的日志 -->
+		<discardingThreshold>0</discardingThreshold>
+		<!-- 更改默认的队列的深度,该值会影响性能.默认值为256 -->
+		<queueSize>512</queueSize>
+		<!-- 添加附加的appender,最多只能添加一个 -->
+		<appender-ref ref="ERROR" />
+	</appender>
+
+	<!-- - 1.name：包名或类名，用来指定受此loger约束的某一个包或者具体的某一个类 - 2.未设置打印级别，所以继承他的上级<root>的日志级别“DEBUG” 
+		- 3.未设置addtivity，默认为true，将此loger的打印信息向上级传递； - 4.未设置appender，此loger本身不打印任何信息，级别为“DEBUG”及大于“DEBUG”的日志信息传递给root， 
+		- root接到下级传递的信息，交给已经配置好的名为“STDOUT”的appender处理，“STDOUT”appender将信息打印到控制台； -->
+	<logger name="ch.qos.logback" />
+
+
+	<!-- 定义不同环境下的日志级别 -->
+	<springProfile name="default">
+		<!-- - 根logger - level:设置打印级别，大小写无关：TRACE, DEBUG, INFO, WARN, ERROR, ALL 
+			和 OFF，不能设置为INHERITED或者同义词NULL。 - 默认是DEBUG。 -appender-ref:可以包含零个或多个<appender-ref>元素，标识这个appender将会添加到这个loger -->
+		<root level="INFO" additivity="false">
+			<appender-ref ref="STDOUT" />
+			<appender-ref ref="DEBUG" />
+			<appender-ref ref="INFO" />
+			<!-- <appender-ref ref="ERROR"/> -->
+			<appender-ref ref="ASYNC" />
+		</root>
+	</springProfile>
+	<!-- 定义不同环境下的日志级别 -->
+	<springProfile name="test">
+		<!-- - 根logger - level:设置打印级别，大小写无关：TRACE, DEBUG, INFO, WARN, ERROR, ALL 
+			和 OFF，不能设置为INHERITED或者同义词NULL。 - 默认是DEBUG。 -appender-ref:可以包含零个或多个<appender-ref>元素，标识这个appender将会添加到这个loger -->
+		<root level="INFO" additivity="false">
+			<appender-ref ref="STDOUT" />
+			<appender-ref ref="DEBUG" />
+			<appender-ref ref="INFO" />
+			<!-- <appender-ref ref="ERROR"/> -->
+			<appender-ref ref="ASYNC" />
+		</root>
+	</springProfile>
+	
+	<!-- 定义不同环境下的日志级别 -->
+	<springProfile name="dev">
+		<!-- - 根logger - level:设置打印级别，大小写无关：TRACE, DEBUG, INFO, WARN, ERROR, ALL 
+			和 OFF，不能设置为INHERITED或者同义词NULL。 - 默认是DEBUG。 -appender-ref:可以包含零个或多个<appender-ref>元素，标识这个appender将会添加到这个loger -->
+		<root level="INFO" additivity="false">
+			<appender-ref ref="STDOUT" />
+			<appender-ref ref="DEBUG" />
+			<appender-ref ref="INFO" />
+			<appender-ref ref="ERROR"/>
+			<appender-ref ref="ASYNC" />
+		</root>
+	</springProfile>
+
+	<springProfile name="prod">
+		<!-- - 根logger - level:设置打印级别，大小写无关：TRACE, DEBUG, INFO, WARN, ERROR, ALL 
+			和 OFF，不能设置为INHERITED或者同义词NULL。 - 默认是DEBUG。 -appender-ref:可以包含零个或多个<appender-ref>元素，标识这个appender将会添加到这个loger -->
+		<root level="INFO" additivity="false">
+			<!-- <appender-ref ref="STDOUT" /> -->
+			<appender-ref ref="DEBUG" />
+			<appender-ref ref="INFO" />
+			<!-- <appender-ref ref="ERROR"/> -->
+			<appender-ref ref="ASYNC" />
+		</root>
+	</springProfile>
+
+
+
+</configuration>

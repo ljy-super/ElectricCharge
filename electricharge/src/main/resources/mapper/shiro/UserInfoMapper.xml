@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.electricharge.core.shiro.mapper.UserInfoMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.electricharge.core.shiro.entity.UserInfo">
+		<id column="id" property="id" />
+	<result column="create_time" property="createTime" />
+	<result column="creator" property="creator" />
+	<result column="edit_time" property="editTime" />
+	<result column="editor" property="editor" />
+	<result column="is_del" property="isDel" />
+		<result column="name" property="name" />
+		<result column="password" property="password" />
+		<result column="salt" property="salt" />
+		<result column="state" property="state" />
+		<result column="user_name" property="userName" />
+	</resultMap>
+<!-- 一对多配置 -->
+	<resultMap id="userInfoWithRole" type="com.electricharge.core.shiro.entity.UserInfo"  extends="BaseResultMap">
+		<!--<collection property="roleList" resultMap="com.electricharge.shiro.mapper.SysRoleMapper.BaseResultMap"></collection>-->
+		<collection property="roleList" ofType="com.electricharge.core.shiro.entity.SysRole" >
+			<id column="rid" property="id" />
+			<result column="create_time" property="createTime" />
+			<result column="creator" property="creator" />
+			<result column="edit_time" property="editTime" />
+			<result column="editor" property="editor" />
+			<result column="is_del" property="isDel" />
+			<result column="available" property="available" />
+			<result column="description" property="description" />
+			<result column="role" property="role" />
+		</collection>
+
+
+
+	</resultMap>
+	<select id="all" resultType="java.util.Map" >
+		SELECT * FROM user_info
+	</select>
+	<select id="selectUserByUserNameWithRole" resultMap="userInfoWithRole" parameterType="java.lang.String">
+		SELECT
+		u.*,
+		r.id as rid,
+		r.ROLE,
+		r.description,
+		r.available
+		FROM user_info u,sys_role r,sys_role_user  ru
+		<where>
+		u.user_name=#{userName}
+		and u.id=ru.uid
+		and r.id=ru.role_id
+		</where>
+	</select>
+</mapper>

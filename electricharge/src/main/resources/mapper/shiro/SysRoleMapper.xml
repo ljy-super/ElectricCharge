@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.electricharge.core.shiro.mapper.SysRoleMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.electricharge.core.shiro.entity.SysRole">
+		<id column="id" property="id" />
+	<result column="create_time" property="createTime" />
+	<result column="creator" property="creator" />
+	<result column="edit_time" property="editTime" />
+	<result column="editor" property="editor" />
+	<result column="is_del" property="isDel" />
+		<result column="available" property="available" />
+		<result column="description" property="description" />
+		<result column="role" property="role" />
+	</resultMap>
+
+	<resultMap id="RoleWithPermission" type="com.electricharge.core.shiro.entity.SysRole" extends="BaseResultMap">
+		<collection property="permissions" ofType="com.electricharge.core.shiro.entity.SysPermission">
+			<id column="pid" property="id" />
+			<result column="name" property="name" />
+			<result column="parent_id" property="parentId" />
+			<result column="parent_ids" property="parentIds" />
+			<result column="permission" property="permission" />
+			<result column="resource_type" property="resourceType" />
+			<result column="url" property="url" />
+		</collection>
+		<!-- 通用查询映射结果 -->
+	</resultMap>
+	
+	<select id="selectRoleByIdWithPermission" resultMap="RoleWithPermission" parameterType="java.lang.Long">
+
+		SELECT
+		r.*,
+		p.id as pid,
+		p . NAME,
+		p .parent_id,
+		p .parent_ids,
+		p .permission,
+		p .resource_type,
+		p .url
+		from sys_permission p,sys_role r,sys_role_permission rp
+		<where>
+		r.id=#{id} AND
+		r.id=rp.role_id AND
+		p.id=rp.permission_id
+		</where>
+	</select>
+				
+</mapper>
