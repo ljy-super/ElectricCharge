@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.imageio.ImageIO;
+import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -23,12 +24,19 @@ public class HomeController {
 	
 	@RequestMapping({"/","/index"})
 	public String index(){
-		return "/index";
+		return "index";
 	}
 	
-	@RequestMapping(value="/login",method=RequestMethod.GET)
-	public String login(){
-		return "login";
+	@RequestMapping(value={"/login"},method=RequestMethod.GET)
+	public String login(Integer type, ServletRequest request){
+		if(type==null||type.intValue()==1)
+			return "login/index";//学生端
+		else if(type.intValue()==2)
+			return "login/index2";//教师端
+		else if(type.intValue()==3)
+			return "login/index3";//宿管端
+
+		return "login/index";//学生端
 	}
 	
 	// 登录提交地址和applicationontext-shiro.xml配置的loginurl一致。 (配置文件方式的说法)
@@ -61,8 +69,9 @@ public class HomeController {
 			}
 			map.put("msg", msg);
 			// 此方法不处理登录成功,由shiro进行处理.
-			return "/login";
+			return "login/index";
 		}
+
 		@RequestMapping(value="getValidateCode",method = RequestMethod.GET)
 		public void  getValidateCode(HttpServletRequest req, HttpServletResponse resp){
 			int width = 60;

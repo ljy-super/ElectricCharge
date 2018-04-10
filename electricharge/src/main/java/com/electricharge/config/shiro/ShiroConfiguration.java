@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import javax.servlet.Filter;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -43,8 +42,8 @@ public class ShiroConfiguration {
     public ShiroFilterFactoryBean shiroFilter(@Qualifier("securityManager") DefaultWebSecurityManager securityManager){
         System.out.println("ShiroConfiguration.shirFilter()");
         ShiroFilterFactoryBean shiroFilterFactoryBean  = new ShiroFilterFactoryBean();
-        Map<String, Filter> filters = shiroFilterFactoryBean.getFilters();//获取filters
-        filters.put("authc", new CustomFormAuthenticationFilter());//将自定义 的FormAuthenticationFilter注入shiroFilter中
+//        Map<String, Filter> filters = shiroFilterFactoryBean.getFilters();//获取filters
+//        filters.put("authc", new CustomFormAuthenticationFilter());//将自定义 的FormAuthenticationFilter注入shiroFilter中
         // 必须设置 SecurityManager
         shiroFilterFactoryBean.setSecurityManager(securityManager);
 
@@ -67,15 +66,24 @@ public class ShiroConfiguration {
         //解决静态资源文件
         filterChainDefinitionMap.put("/static/**", "anon");
 
+        filterChainDefinitionMap.put("/**/*.js", "anon");
+        filterChainDefinitionMap.put("/**/*.css", "anon");
+        filterChainDefinitionMap.put("/**/*.gif", "anon");
+        filterChainDefinitionMap.put("/**/*.jpg", "anon");
+        filterChainDefinitionMap.put("/**/*.png", "anon");
+        filterChainDefinitionMap.put("/**/*.ico", "anon");
+        filterChainDefinitionMap.put("/**/*.map", "anon");
+        filterChainDefinitionMap.put("/druid/*", "anon");
 
         //<!-- 过滤链定义，从上向下顺序执行，一般将 /**放在最为下边 -->:这是一个坑呢，一不小心代码就不好使了;
         //<!-- authc:所有url都必须认证通过才可以访问; anon:所有url都都可以匿名访问-->
         filterChainDefinitionMap.put("/**", "authc");
 
+
         // 如果不设置默认会自动寻找Web工程根目录下的"/login.jsp"页面
         shiroFilterFactoryBean.setLoginUrl("/login");
         // 登录成功后要跳转的链接
-        shiroFilterFactoryBean.setSuccessUrl("/index");
+        shiroFilterFactoryBean.setSuccessUrl("index");
         //未授权界面;
         shiroFilterFactoryBean.setUnauthorizedUrl("/403");
 
