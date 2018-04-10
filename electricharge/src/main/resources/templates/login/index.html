@@ -48,8 +48,8 @@
 			<div class="row">
 				<div class="col-md-12 text-center">
 					<ul class="menu">
-						<li class="active"><a href="login?type=1">学生端</a></li>
-						<li><a href="login?type=2">教师端</a></li>
+						<li class="active"><a href="login?type=1">教师端</a></li>
+						<li><a href="login?type=2">学生端</a></li>
 						<li><a href="login?type=3">宿管端</a></li>
 					</ul>
 				</div>
@@ -61,7 +61,7 @@
 
 					<!-- Start Sign In Form -->
 					<form action="login" class="fh5co-form animate-box" data-animate-effect="fadeIn" method="post">
-						<h2>管理员登录</h2>
+						<h2>Sign Up</h2>
 						<div class="form-group">
 							<label for="username" class="sr-only">Username</label>
 							<input type="text" class="form-control" id="username" name="username" placeholder="账号" autocomplete="off">
@@ -78,7 +78,8 @@
 						</div>
 						<h4 th:text="${msg}"></h4>
 						<div class="form-group">
-							<input type="submit" value="Sign In" class="btn btn-primary">
+							<input type="hidden"  id="type" name="type" value="1" >
+							<input type="submit" value="登录" class="btn btn-primary">
 						</div>
 					</form>
 					<!-- END Sign In Form -->

@@ -50,8 +50,8 @@
 			<div class="row">
 				<div class="col-md-12 text-center">
 					<ul class="menu">
-						<li ><a href="login?type=1">学生端</a></li>
-						<li class="active"><a href="login?type=2">教师端</a></li>
+						<li ><a href="login?type=1">教师端</a></li>
+						<li class="active"><a href="login?type=2">学生端</a></li>
 						<li><a href="login?type=3">宿管端</a></li>
 					</ul>
 				</div>
@@ -61,24 +61,25 @@
 					
 
 					<!-- Start Sign In Form -->
-					<form action="#" class="fh5co-form animate-box" data-animate-effect="fadeInLeft">
+					<form action="login" class="fh5co-form animate-box" data-animate-effect="fadeInLeft" method="post">
 						<h2>Sign In</h2>
 						<div class="form-group">
 							<label for="username" class="sr-only">Username</label>
-							<input type="text" class="form-control" id="username" placeholder="Username" autocomplete="off">
+							<input type="text" class="form-control" id="username" name="username" placeholder="Username" autocomplete="off">
 						</div>
 						<div class="form-group">
 							<label for="password" class="sr-only">Password</label>
-							<input type="password" class="form-control" id="password" placeholder="Password" autocomplete="off">
+							<input type="password" class="form-control" id="password" name="password" placeholder="Password" autocomplete="off">
 						</div>
 						<div class="form-group">
-							<label for="remember"><input type="checkbox" id="remember"> Remember Me</label>
+							<label for="rememberMe"><input type="checkbox" id="rememberMe" name="rememberMe"> Remember Me</label>
 						</div>
 						<div class="form-group">
-							<p>Not registered? <a href="sign-up2.html">Sign Up</a> | <a href="forgot2.html">Forgot Password?</a></p>
+							<p><h4 th:text="${msg}"></h4></p>
 						</div>
 						<div class="form-group">
-							<input type="submit" value="Sign In" class="btn btn-primary">
+							<input type="hidden"  id="type" name="type" value="2" >
+							<input type="submit" value="登录" class="btn btn-primary">
 						</div>
 					</form>
 					<!-- END Sign In Form -->
@@ -86,7 +87,7 @@
 				</div>
 			</div>
 			<div class="row" style="padding-top: 60px; clear: both;">
-				<div class="col-md-12 text-center"><p><small>&copy; All Rights Reserved. More Templates <a href="http://www.cssmoban.com/" target="_blank" title="模板之家">模板之家</a> - Collect from <a href="http://www.cssmoban.com/" title="网页模板" target="_blank">网页模板</a></small></p></div>
+				<div class="col-md-12 text-center"><p><small>&copy;宿舍电费管理系统 </small></p></div>
 			</div>
 		</div>
 	
