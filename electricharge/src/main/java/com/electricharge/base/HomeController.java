@@ -1,8 +1,11 @@
 package com.electricharge.base;
 
+import com.electricharge.core.shiro.entity.UserInfo;
+import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.ExcessiveAttemptsException;
 import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.UnknownAccountException;
+import org.apache.shiro.subject.Subject;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,8 +26,12 @@ import java.util.Random;
 public class HomeController {
 	
 	@RequestMapping({"/","/index"})
-	public String index(){
-		return "index";
+	public String index(Model model){
+
+		Subject currentUser = SecurityUtils.getSubject();
+		UserInfo user = (UserInfo)currentUser.getPrincipal();
+		model.addAttribute("userInfo",user);
+		return "main/index";
 	}
 	
 	@RequestMapping(value={"/login"},method=RequestMethod.GET)
@@ -125,6 +132,7 @@ public class HomeController {
 
 		@RequestMapping(value="/logout",method=RequestMethod.GET)
 		public String logout(){
+			SecurityUtils.getSubject().logout();
 			return "login";
 		}
 }

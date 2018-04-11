@@ -25,7 +25,7 @@ public class MpGenerator {
         AutoGenerator mpg = new AutoGenerator();
         // 全局配置
         GlobalConfig gc = new GlobalConfig();
-        gc.setOutputDir("D:\\localWork\\ShiroDemo\\src\\main\\java");
+        gc.setOutputDir("D:\\IdeaProjects\\ElectricCharge\\electricharge\\src\\dormitory\\java");
 //        gc.setOutputDir("D:\\");
         gc.setFileOverride(true);
         gc.setActiveRecord(true);
@@ -45,15 +45,15 @@ public class MpGenerator {
         dsc.setDbType(DbType.MYSQL);
         dsc.setDriverName("com.mysql.jdbc.Driver");
         dsc.setUsername("root");
-        dsc.setPassword("rot");
+        dsc.setPassword("root");
         dsc.setUrl("jdbc:mysql://47.106.126.57:3306/electricharge?characterEncoding#UTF-8");
         mpg.setDataSource(dsc);
         // 策略配置
         StrategyConfig strategy = new StrategyConfig();
         //strategy.setTablePrefix("beautiful_");// 此处可以修改为您的表前缀
-        strategy.setNaming(NamingStrategy.underline_to_camel);// 表名生成策略
+        strategy.setNaming(NamingStrategy.nochange);// 表名生成策略
 //        strategy.setInclude(new String[] { "sys_role_permission","sys_role_user" }); // 需要生成的表
-        strategy.setInclude(new String[] { "sys_permission" }); // 需要生成的表
+        strategy.setInclude(new String[] { "dormitory" }); // 需要生成的表
         // strategy.setExclude(new String[]{"test"}); // 排除生成的表
         // 字段名生成策略
 //        strategy.setFieldNaming(NamingStrategy.underline_to_camel);
@@ -78,7 +78,7 @@ public class MpGenerator {
         mpg.setStrategy(strategy);
         // 包配置
         PackageConfig pc = new PackageConfig();
-        pc.setParent("com.core.shiro");
+        pc.setParent("com.electricharge.dormitory");
 //        pc.setModuleName("");
         mpg.setPackageInfo(pc);
         // 注入自定义配置，可以在 VM 中使用 cfg.abc 设置的值
@@ -91,8 +91,8 @@ public class MpGenerator {
             }
         };
         mpg.setCfg(cfg);
-        // 自定义模板配置，可以 copy 源码 mybatis-plus/src/main/resources/template 下面内容修改，
-        // 放置自己项目的 src/main/resources/template 目录下, 默认名称一下可以不配置，也可以自定义模板名称
+        // 自定义模板配置，可以 copy 源码 mybatis-plus/src/dormitory/resources/template 下面内容修改，
+        // 放置自己项目的 src/dormitory/resources/template 目录下, 默认名称一下可以不配置，也可以自定义模板名称
         // TemplateConfig tc = new TemplateConfig();
         // tc.setController("...");
         // tc.setEntity("...");
