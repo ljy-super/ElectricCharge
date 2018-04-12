@@ -1,16 +1,20 @@
 package com.electricharge.dormitory.web;
 
 
-import com.baomidou.mybatisplus.plugins.Page;
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.mapper.Wrapper;
+import com.electricharge.base.MySearch;
 import com.electricharge.dormitory.entity.Dormitory;
 import com.electricharge.dormitory.service.IDormitoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.ServletRequest;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -35,12 +39,15 @@ public class DormitoryController {
 
     @ResponseBody
     @RequestMapping("getDormitoryList")
-    public Map  getDormitoryList(ServletRequest request){
-        Page<Dormitory> page = new Page<>();
-        dormitoryServiceImpl.selectPage(page);
+    public Map  getDormitoryList(@RequestBody MySearch<Dormitory> myPage){
+        Wrapper<Dormitory> wrapper=new EntityWrapper();
+        if(myPage.getDormitoryCode()!=null&& myPage.getDormitoryCode().length()>0){
+            wrapper.like("code",myPage.getDormitoryCode());
+        }
+        dormitoryServiceImpl.selectPage(myPage,wrapper);
         Map<String, Object> map = new HashMap<>();
-        map.put("rows", page.getRecords());
-        map.put("total", page.getTotal());
+        map.put("rows", myPage.getRecords());
+        map.put("total", myPage.getTotal());
         return map;
     }
 
@@ -48,6 +55,16 @@ public class DormitoryController {
     @RequestMapping("saveDormitory")
     public Map saveDormitory(Dormitory dormitory){
         boolean b = dormitoryServiceImpl.insertOrUpdateAllColumn(dormitory);
+        Map<String, Object> map = new HashMap<>();
+        map.put("success", b);
+        return map;
+    }
+
+    @ResponseBody
+    @RequestMapping("delDormitory")
+    public Map delDormitory(@RequestParam("ids[]")List<Integer> ids){
+//        List<Integer> list = Arrays.asList(ids);
+        boolean b = dormitoryServiceImpl.deleteBatchIds(ids);
         Map<String, Object> map = new HashMap<>();
         map.put("success", b);
         return map;
