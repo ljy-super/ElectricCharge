@@ -135,4 +135,10 @@ public class HomeController {
 			SecurityUtils.getSubject().logout();
 			return "login";
 		}
+
+		@RequestMapping(value="/error",method=RequestMethod.GET)
+		public String error(Model model){
+		model.addAttribute("code",500);
+		return "error";
+	}
 }

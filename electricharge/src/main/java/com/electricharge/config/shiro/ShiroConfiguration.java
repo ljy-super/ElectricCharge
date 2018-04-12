@@ -45,6 +45,7 @@ public class ShiroConfiguration {
 //        Map<String, Filter> filters = shiroFilterFactoryBean.getFilters();//获取filters
 //        filters.put("authc", new CustomFormAuthenticationFilter());//将自定义 的FormAuthenticationFilter注入shiroFilter中
         // 必须设置 SecurityManager
+//        filters.put("perms", new ShiroPermissionsFilter()); //对注解方式无效，仅对下方map配置有效
         shiroFilterFactoryBean.setSecurityManager(securityManager);
 
 
@@ -73,10 +74,17 @@ public class ShiroConfiguration {
         filterChainDefinitionMap.put("/**/*.png", "anon");
         filterChainDefinitionMap.put("/**/*.ico", "anon");
         filterChainDefinitionMap.put("/**/*.map", "anon");
+        filterChainDefinitionMap.put("/**/*.woff2", "anon");
         filterChainDefinitionMap.put("/druid/*", "anon");
 
         //<!-- 过滤链定义，从上向下顺序执行，一般将 /**放在最为下边 -->:这是一个坑呢，一不小心代码就不好使了;
         //<!-- authc:所有url都必须认证通过才可以访问; anon:所有url都都可以匿名访问-->
+
+        //ajax
+//        filterChainDefinitionMap.put("/dormitory/main", "perms[dormitory:view]");
+
+
+
         filterChainDefinitionMap.put("/**", "authc");
 
 
@@ -84,8 +92,8 @@ public class ShiroConfiguration {
         shiroFilterFactoryBean.setLoginUrl("/login");
         // 登录成功后要跳转的链接
         shiroFilterFactoryBean.setSuccessUrl("index");
-        //未授权界面;
-        shiroFilterFactoryBean.setUnauthorizedUrl("/403");
+        //未授权界面;   对注解方式无效
+//        shiroFilterFactoryBean.setUnauthorizedUrl("/error");
 
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
         return shiroFilterFactoryBean;

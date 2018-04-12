@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>人员管理</title>
+
+    <link href="../main/css/bootstrap.css" rel="stylesheet">
+    <link href="../main/css/bootstrap-table.css" rel="stylesheet">
+    <link href="../main/css/styles.css" rel="stylesheet">
+
+    <!--[if lt IE 9]>
+    <script src="../main/js/html5shiv.js"></script>
+    <script src="../main/js/respond.min.js"></script>
+    <![endif]-->
+
+    <script src="../main/js/jquery-1.11.1.min.js"></script>
+    <script src="../main/js/bootstrap.min.js"></script>
+    <script src="../main/js/bootstrap-table.js"></script>
+    <script src="../main/js/bootstrap-table-zh-CN.js"></script>
+    <script src="../main/js/myModal.js"></script>
+
+
+</head>
+<body>
+<div class="panel panel-default" style="margin-right:50px;">
+    <div class="panel-heading">
+        查询条件
+    </div>
+    <div class="panel-body form-group" style="margin-top:0px;">
+        <label class="col-sm-2 control-label" style="text-align: right; margin-top:5px">宿舍编号：</label>
+        <div class="col-sm-4">
+            <input type="text" class="form-control" name="dormitoryCode" id="dormitoryCode"/>
+        </div>
+        <div class="col-sm-1 col-sm-offset-5">
+            <button class="btn btn-primary" id="search_btn" onclick="searchList()">查询</button>
+        </div>
+    </div>
+</div>
+<div id="toolbar" class="btn-group pull-right" style="margin-right: 20px;">
+    <button id="btn_edit" type="button" class="btn btn-default" onclick="openEditModal()">
+        <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>修改
+    </button>
+    <button id="btn_delete" type="button" class="btn btn-default" onclick="del()" >
+        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>删除
+    </button>
+    <button id="btn_add" type="button" class="btn btn-default" onclick="addModal()">
+        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>新增
+    </button>
+</div>
+<div class="row"  style="margin-right: 50px;">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <table id="table" data-toggle="table"  >
+
+                </table>
+            </div>
+        </div>
+</div>
+
+
+
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">保存记录</h4>
+            </div>
+            <div class="modal-body">
+                <form id="myForm">
+                    <input id="id" type="hidden" name="id">
+                    <div class="form-group">
+                        <label for="code" class="control-label">宿舍编号:</label>
+                        <input type="text" class="form-control" id="code" name="code">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="building" class="control-label">宿舍楼宇:</label>
+                        <input type="text" class="form-control" id="building" name="building">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="floor" class="control-label">宿舍楼层:</label>
+                        <input type="text" class="form-control" id="floor" name="floor">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="doorplate" class="control-label">宿舍门牌:</label>
+                        <input type="text" class="form-control" id="doorplate" name="doorplate">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="total" class="control-label">宿舍容纳人数:</label>
+                        <input type="number" class="form-control" id="total" name="total">
+                    </div>
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary" onclick="saveDormitory()">保存</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- system modal start -->
+<div id="com-alert" class="modal" style="z-index:9999;display: none;" >
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                <h5 class="modal-title"><i class="fa fa-exclamation-circle"></i> [Title]</h5>
+            </div>
+            <div class="modal-body small">
+                <p>[Message]</p>
+            </div>
+            <div class="modal-footer" >
+                <button type="button" class="btn btn-primary ok" data-dismiss="modal">[BtnOk]</button>
+                <button type="button" class="btn btn-default cancel" data-dismiss="modal">[BtnCancel]</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- system modal end -->
+</body>
+<script type="text/javascript">
+    $.extend($.fn.bootstrapTable.defaults, $.fn.bootstrapTable.locales['zh-CN']);
+
+    $('#table').bootstrapTable({
+        columns: [
+            {
+                checkbox : true          //列表中显示复选框
+            }, {
+                 field: 'id',
+                 title: 'Item ID'
+            },{
+                field: 'code',
+                title: '宿舍编号'
+            }, {
+                field: 'building',
+                title: '宿舍楼宇'
+            }, {
+                field: 'floor',
+                title: '宿舍楼层'
+            }, {
+                field: 'doorplate',
+                title: '宿舍门牌'
+            }, {
+            field: 'total',
+            title: '容纳人数'
+        }, ],
+        toolbar: '#toolbar',//指定工具栏
+        toolbarAlign:'right',//工具栏对齐方式
+        buttonsAlign:'right',//按钮对齐方式
+        method:"post",
+        url:"/dormitory/getDormitoryList",
+        showFooter:true,
+        showHeader:true,
+        pagination:true,
+        sidePagination: "server",
+        pageNumber:1,
+        pageSize: 10,
+        idField:'id',
+        pageList: [10, 25, 50, 100],        //可供选择的每页的行数（*）
+        ////查询参数,每次调用是会带上这个参数，可自定义
+        queryParams : function(params) {
+         var dormitoryCode = $('#dormitoryCode').val();
+        return {
+            current: params.offset/params.limit+1,
+            size: params.limit,
+            dormitoryCode:dormitoryCode
+        };
+    },
+
+    });
+    function addModal(){
+        $('#myModalLabel').text('新增宿舍');
+        $("#myForm")[0].reset();
+        $('#myModal').modal({
+            keyboard: false,
+        })
+    }
+
+    function openEditModal(){
+       var rows= $('#table').bootstrapTable('getSelections');
+        if (rows.length != 1) {
+            Modal.alert({
+                title:'提示',
+                btnok: '确定',
+                msg : "请选择一条要修改的数据"
+            });
+            return;
+        }else {
+            $("#myForm")[0].reset();
+            console.log(rows);
+            $("#id").val(rows[0].id);
+            $("#building").val(rows[0].building);
+            $("#floor").val(rows[0].floor);
+            $("#doorplate").val(rows[0].doorplate);
+            $("#total").val(rows[0].total);
+            $("#code").val(rows[0].code);
+            $('#myModal').modal('show');
+        }
+
+    }
+    function saveDormitory() {
+        var flag = checkForm();
+        if (!flag)return;
+        var targetUrl='/dormitory/saveDormitory';
+        var data = $("#myForm").serialize();
+        $.ajax({
+            type:'post',
+            url:targetUrl,
+            cache: false,
+            data:data,
+            dataType:'json',
+            success:function(data){
+                if(data!=null&&data.success==true){
+                    Modal.alert({
+                        msg:"保存成功"
+                    });
+                }else{
+                    Modal.alert({
+                        msg:"保存失败"
+                    });
+                }
+                $('#myModal').modal('hide');
+                $('#table').bootstrapTable('refresh');
+            },
+            error:function(){
+                Modal.alert({
+                    msg:"请求失败"
+                });
+            }
+        });
+        }
+
+        function checkForm(){
+            var building= $("#building").val();
+            var floor=  $("#floor").val();
+            var doorplate=  $("#doorplate").val();
+            var total=  $("#total").val();
+            var code=  $("#code").val();
+
+            if(building.length==0){
+                Modal.alert({
+                    msg:"宿舍楼宇为空"
+                });
+                return false;
+            }else if(floor.length==0){
+                Modal.alert({
+                    msg:"宿舍楼层为空"
+                });
+                return false;
+            }else if(doorplate.length==0){
+                Modal.alert({
+                    msg:"宿舍门牌为空"
+                });
+                return false;
+            }else if(total.length==0){
+                Modal.alert({
+                    msg:"宿舍容纳人数为空"
+                });
+                return false;
+            }else if(code.length==0){
+                Modal.alert({
+                    msg:"宿舍编号为空"
+                });
+                return false;
+            }
+            return true;
+        }
+
+        function searchList(){
+            $('#table').bootstrapTable('refresh');
+        }
+
+        function  del() {
+            var targetUrl='/dormitory/delDormitory';
+            var rows= $('#table').bootstrapTable('getSelections');
+            if (rows.length ==0) {
+                Modal.alert({
+                    title:'提示',
+                    btnok: '确定',
+                    msg : "请选择数据"
+                });
+                return;
+            }else{
+                var ids=[];
+                rows.map(function (value,index){
+                   ids.push(value.id);
+                });
+                console.log(ids);
+                $.ajax({
+                    type:'post',
+                    url:targetUrl,
+                    cache: false,
+                    data:{ids:ids},
+                    // contentType: "application/json;charset=UTF-8",
+                    dataType:'json',
+                    success:function(data){
+                        if(data!=null&&data.success==true){
+                            Modal.alert({
+                                msg:"删除成功"
+                            });
+                        }else{
+                            Modal.alert({
+                                msg:"删除失败"
+                            });
+                        }
+                        $('#table').bootstrapTable('refresh');
+                    },
+                    error:function(){
+                        Modal.alert({
+                            msg:"请求失败"
+                        });
+                    }
+                });
+
+            }
+        }
+</script>
+</html>

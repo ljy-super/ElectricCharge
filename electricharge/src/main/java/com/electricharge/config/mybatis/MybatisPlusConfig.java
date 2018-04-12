@@ -35,7 +35,8 @@ import javax.sql.DataSource;
  * Created by linjiayong on 2017/8/21.
  */
 @Configuration
-@MapperScan(basePackages = { "com.electricharge.core.shiro.mapper","com.electricharge.dormitory.mapper" })
+@MapperScan(basePackages = { "com.electricharge.core.shiro.mapper",
+        "com.electricharge.dormitory.mapper","com.electricharge.student.mapper" })
 public class MybatisPlusConfig {
 //    @Autowired
 //    private DataSource dataSource;

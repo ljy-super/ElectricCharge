@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.electricharge.student.mapper.StudentMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.electricharge.student.entity.Student">
+        <id column="id" property="id" />
+        <result column="studentNum" property="studentNum" />
+        <result column="studentClass" property="studentClass" />
+        <result column="studentSex" property="studentSex" />
+        <result column="userId" property="userId" />
+        <result column="dormitoryId" property="dormitoryId" />
+    </resultMap>
+
+</mapper>

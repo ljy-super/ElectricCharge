@@ -25,7 +25,7 @@ public class MpGenerator {
         AutoGenerator mpg = new AutoGenerator();
         // 全局配置
         GlobalConfig gc = new GlobalConfig();
-        gc.setOutputDir("D:\\IdeaProjects\\ElectricCharge\\electricharge\\src\\dormitory\\java");
+        gc.setOutputDir("D:\\IdeaProjects\\ElectricCharge\\electricharge\\src\\main\\java");
 //        gc.setOutputDir("D:\\");
         gc.setFileOverride(true);
         gc.setActiveRecord(true);
@@ -53,7 +53,7 @@ public class MpGenerator {
         //strategy.setTablePrefix("beautiful_");// 此处可以修改为您的表前缀
         strategy.setNaming(NamingStrategy.nochange);// 表名生成策略
 //        strategy.setInclude(new String[] { "sys_role_permission","sys_role_user" }); // 需要生成的表
-        strategy.setInclude(new String[] { "dormitory" }); // 需要生成的表
+        strategy.setInclude(new String[] { "student" }); // 需要生成的表
         // strategy.setExclude(new String[]{"test"}); // 排除生成的表
         // 字段名生成策略
 //        strategy.setFieldNaming(NamingStrategy.underline_to_camel);
@@ -78,7 +78,7 @@ public class MpGenerator {
         mpg.setStrategy(strategy);
         // 包配置
         PackageConfig pc = new PackageConfig();
-        pc.setParent("com.electricharge.dormitory");
+        pc.setParent("com.electricharge.student");
 //        pc.setModuleName("");
         mpg.setPackageInfo(pc);
         // 注入自定义配置，可以在 VM 中使用 cfg.abc 设置的值

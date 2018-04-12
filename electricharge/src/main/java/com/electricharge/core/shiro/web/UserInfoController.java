@@ -49,8 +49,10 @@ public class UserInfoController {
         return map;
     }*/
 
-
-
+    @RequestMapping("userMain")
+    public String main() {
+        return "main/userMain";
+    }
     /**
      * 用户查询.
      * @return
