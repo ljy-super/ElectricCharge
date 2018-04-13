@@ -52,7 +52,6 @@
         <div class="panel panel-default">
             <div class="panel-body">
                 <table id="table" data-toggle="table"  >
-
                 </table>
             </div>
         </div>
@@ -66,41 +65,72 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" id="myModalLabel">保存记录</h4>
+                <h4 class="modal-title" id="myModalLabel">修改记录</h4>
             </div>
             <div class="modal-body">
                 <form id="myForm">
                     <input id="id" type="hidden" name="id">
                     <div class="form-group">
-                        <label for="code" class="control-label">宿舍编号:</label>
-                        <input type="text" class="form-control" id="code" name="code">
+                        <label for="userName" class="control-label">账号</label>
+                        <input type="text" class="form-control" id="userName" name="userName">
                     </div>
 
                     <div class="form-group">
-                        <label for="building" class="control-label">宿舍楼宇:</label>
-                        <input type="text" class="form-control" id="building" name="building">
+                        <label for="password" class="control-label">密码</label>
+                        <input type="text" class="form-control" id="password" name="password">
                     </div>
-
                     <div class="form-group">
-                        <label for="floor" class="control-label">宿舍楼层:</label>
-                        <input type="text" class="form-control" id="floor" name="floor">
+                        <label for="name" class="control-label">名字</label>
+                        <input type="text" class="form-control" id="name" name="name">
                     </div>
-
                     <div class="form-group">
-                        <label for="doorplate" class="control-label">宿舍门牌:</label>
-                        <input type="text" class="form-control" id="doorplate" name="doorplate">
+                        <label>类型</label>
+                        <select class="form-control" id="type" name="type" >
+                        </select>
                     </div>
-
-                    <div class="form-group">
-                        <label for="total" class="control-label">宿舍容纳人数:</label>
-                        <input type="number" class="form-control" id="total" name="total">
-                    </div>
-
                 </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                <button type="button" class="btn btn-primary" onclick="saveDormitory()">保存</button>
+                <button type="button" class="btn btn-primary" onclick="save()">保存</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="studentModal" tabindex="-2" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="studentModalLabel">保存学生资料</h4>
+            </div>
+            <div class="modal-body">
+                <form id="studentForm">
+                    <input id="userId" type="hidden" name="userId">
+                    <input id="dormitoryId" type="hidden" name="dormitoryId">
+
+                    <div class="form-group">
+                        <label for="userName" class="control-label">学生学号</label>
+                        <input type="text" class="form-control" id="studentNum" name="studentNum">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password" class="control-label">学生班级</label>
+                        <input type="text" class="form-control" id="studentClass" name="studentClass">
+                    </div>
+                    <div class="form-group">
+                        <label for="name" class="control-label">性别</label>
+                        <select class="form-control" id="studentSex" name="studentSex" >
+                            <option>男</option>
+                            <option>女</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary" onclick="save()">保存</button>
             </div>
         </div>
     </div>
@@ -126,6 +156,20 @@
 <!-- system modal end -->
 </body>
 <script type="text/javascript">
+    $.ajax({
+        type:'post',
+        url:"/userInfo/getType",
+        cache: false,
+        dataType:'json',
+        success:function(data){
+            if(data!=null){
+                for(var i=0;i<data.length;i++){
+                    $('#type').append('<option value="' + data[i].id + '">' + data[i].description + '</option>');
+                }
+            }
+        }
+    });
+
     $.extend($.fn.bootstrapTable.defaults, $.fn.bootstrapTable.locales['zh-CN']);
 
     $('#table').bootstrapTable({
@@ -134,29 +178,33 @@
                 checkbox : true          //列表中显示复选框
             }, {
                  field: 'id',
-                 title: 'Item ID'
+                 title: 'ID'
             },{
-                field: 'code',
-                title: '宿舍编号'
+                field: 'name',
+                title: '名字'
             }, {
-                field: 'building',
-                title: '宿舍楼宇'
+                field: 'userName',
+                title: '账号'
             }, {
-                field: 'floor',
-                title: '宿舍楼层'
+                field: 'type',
+                title: '类型',
+                formatter:function(value){
+                   return $("#type option[value='"+value+"']").text();
+                }
             }, {
-                field: 'doorplate',
-                title: '宿舍门牌'
-            }, {
-            field: 'total',
-            title: '容纳人数'
-        }, ],
+            field: '',
+            title: '编辑',
+                formatter:function(value, row, index){
+                    if(row.type==3){
+                        return "  <button class=\"btn btn-primary\" id=\"search_btn\" onclick='openStudentModal()'>编辑学生资料</button>"
+                    }
+                }
+        } ],
         toolbar: '#toolbar',//指定工具栏
         toolbarAlign:'right',//工具栏对齐方式
         buttonsAlign:'right',//按钮对齐方式
         method:"post",
-        url:"/dormitory/getDormitoryList",
-        showFooter:true,
+        url:"/userInfo/userList",
         showHeader:true,
         pagination:true,
         sidePagination: "server",
@@ -176,8 +224,10 @@
 
     });
     function addModal(){
-        $('#myModalLabel').text('新增宿舍');
+        $('#myModalLabel').text('新增人员');
         $("#myForm")[0].reset();
+        $("#userName").attr("readonly",false);
+
         $('#myModal').modal({
             keyboard: false,
         })
@@ -193,22 +243,26 @@
             });
             return;
         }else {
+            $('#myModalLabel').text('修改人员');
             $("#myForm")[0].reset();
             console.log(rows);
             $("#id").val(rows[0].id);
-            $("#building").val(rows[0].building);
-            $("#floor").val(rows[0].floor);
+            $("#name").val(rows[0].name);
+            $("#userName").val(rows[0].userName);
+            $("#password").val(rows[0].password);
+            $("#userName").attr("readonly",true);
+            $("#type").val(rows[0].type);
+
             $("#doorplate").val(rows[0].doorplate);
-            $("#total").val(rows[0].total);
-            $("#code").val(rows[0].code);
+
             $('#myModal').modal('show');
         }
 
     }
-    function saveDormitory() {
+    function save() {
         var flag = checkForm();
         if (!flag)return;
-        var targetUrl='/dormitory/saveDormitory';
+        var targetUrl='/userInfo/userSave';
         var data = $("#myForm").serialize();
         $.ajax({
             type:'post',
@@ -238,35 +292,29 @@
         }
 
         function checkForm(){
-            var building= $("#building").val();
-            var floor=  $("#floor").val();
-            var doorplate=  $("#doorplate").val();
-            var total=  $("#total").val();
-            var code=  $("#code").val();
+            var name=      $("#name").val();
+            var password=  $("#password").val();
+            var userName=  $("#userName").val();
+            var type=      $("#type").val();
 
-            if(building.length==0){
+            if(name.length==0){
                 Modal.alert({
-                    msg:"宿舍楼宇为空"
+                    msg:"名字为空"
                 });
                 return false;
-            }else if(floor.length==0){
+            }else if(password.length==0){
                 Modal.alert({
-                    msg:"宿舍楼层为空"
+                    msg:"密码为空"
                 });
                 return false;
-            }else if(doorplate.length==0){
+            }else if(userName.length==0){
                 Modal.alert({
-                    msg:"宿舍门牌为空"
+                    msg:"账号为空"
                 });
                 return false;
-            }else if(total.length==0){
+            }else if(type.length==0){
                 Modal.alert({
-                    msg:"宿舍容纳人数为空"
-                });
-                return false;
-            }else if(code.length==0){
-                Modal.alert({
-                    msg:"宿舍编号为空"
+                    msg:"类型为空"
                 });
                 return false;
             }
@@ -278,7 +326,7 @@
         }
 
         function  del() {
-            var targetUrl='/dormitory/delDormitory';
+            var targetUrl='/userInfo/userDel';
             var rows= $('#table').bootstrapTable('getSelections');
             if (rows.length ==0) {
                 Modal.alert({
@@ -321,5 +369,10 @@
 
             }
         }
+
+        function openStudentModal(){
+        $("#studentModal").modal('show');
+        }
+
 </script>
 </html>

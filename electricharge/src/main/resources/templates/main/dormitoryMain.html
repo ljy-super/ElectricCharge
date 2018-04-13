@@ -156,7 +156,6 @@
         buttonsAlign:'right',//按钮对齐方式
         method:"post",
         url:"/dormitory/getDormitoryList",
-        showFooter:true,
         showHeader:true,
         pagination:true,
         sidePagination: "server",
@@ -194,7 +193,7 @@
             return;
         }else {
             $("#myForm")[0].reset();
-            console.log(rows);
+            $('#myModalLabel').text('修改宿舍资料');
             $("#id").val(rows[0].id);
             $("#building").val(rows[0].building);
             $("#floor").val(rows[0].floor);

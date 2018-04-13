@@ -1,13 +1,27 @@
 package com.electricharge.core.shiro.web;
 
 
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.mapper.Wrapper;
+import com.electricharge.base.MySearch;
+import com.electricharge.base.MyUtils;
+import com.electricharge.core.shiro.entity.SysRole;
+import com.electricharge.core.shiro.entity.SysRoleUser;
 import com.electricharge.core.shiro.entity.UserInfo;
+import com.electricharge.core.shiro.service.ISysRoleService;
+import com.electricharge.core.shiro.service.ISysRoleUserService;
 import com.electricharge.core.shiro.service.IUserInfoService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -24,32 +38,14 @@ public class UserInfoController {
     @Autowired
     IUserInfoService iUserInfoService;
 
+    @Autowired
+    ISysRoleService sysRoleService;
 
-   /* @RequiresAuthentication
-	@RequestMapping("getUser")
-    public UserInfo getUser(){
-        UserInfo userInfo = iUserInfoService.selectUserByUserNameWithRole("admin");
-
-        return userInfo;
-    }
-
-    @RequestMapping("addUser")
-//    @RequiresRoles(value = "manage")
-    public UserInfo addUser(String name){
-        UserInfo userInfo = new UserInfo();
-        userInfo.setUserName(name);
-        iUserInfoService.insert(userInfo);
-        return userInfo;
-    }
-
-    @RequestMapping("delUser")
-    public Map delUser(){
-        Map<String, String> map = new HashMap<>();
-        iUserInfoService.deleteById((long)13);
-        return map;
-    }*/
+    @Autowired
+    ISysRoleUserService iSysRoleUserService;
 
     @RequestMapping("userMain")
+    @RequiresPermissions("user:main")
     public String main() {
         return "main/userMain";
     }
@@ -57,23 +53,52 @@ public class UserInfoController {
      * 用户查询.
      * @return
      */
+    @ResponseBody
     @RequestMapping("/userList")
-    public ModelAndView userInfo(){
-        ModelAndView userInfo = new ModelAndView("userInfo");
-        UserInfo user= new UserInfo();
-        user.setUserName("lin");
-        userInfo.addObject("userInfo",user);
-        return userInfo;
+    @RequiresPermissions("user:list")
+    public Map userList(@RequestBody MySearch<UserInfo> myPage){
+
+        Wrapper<UserInfo> wrapper=new EntityWrapper();
+//        if(myPage.getDormitoryCode()!=null&& myPage.getDormitoryCode().length()>0){
+//            wrapper.like("code",myPage.getDormitoryCode());
+//        }
+        iUserInfoService.selectPage(myPage,wrapper);
+        Map<String, Object> map = new HashMap<>();
+        map.put("rows", myPage.getRecords());
+        map.put("total", myPage.getTotal());
+        return map;
+
     }
 
     /**
      * 用户添加;
      * @return
      */
-    @RequestMapping("/userAdd")
-    @RequiresPermissions("userInfo:add")//权限管理;
-    public String userInfoAdd(){
-        return "userInfoAdd";
+    @RequestMapping("/userSave")
+    @RequiresPermissions("userInfo:save")//权限管理;
+    @ResponseBody
+    public Map userInfoAdd(UserInfo userInfo){
+        try {
+            String s = MyUtils.getMd5Syr(userInfo.getPassword());
+            userInfo.setPassword(s);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        boolean b = iUserInfoService.insertOrUpdate(userInfo);
+        iUserInfoService.
+        if(userInfo.getId()!=null){
+            Map<String,Object> map = new HashMap();
+            map.put("uid",userInfo.getId());
+            iSysRoleUserService.deleteByMap(map);
+        }
+        SysRoleUser sysRoleUser=new SysRoleUser();
+        sysRoleUser.setRoleId(userInfo.getId());
+        sysRoleUser.setRoleId(userInfo.getId());
+
+        iSysRoleUserService
+        Map<String, Object> map = new HashMap<>();
+        map.put("success", b);
+        return map;
     }
 
     /**
@@ -82,13 +107,20 @@ public class UserInfoController {
      */
     @RequestMapping("/userDel")
     @RequiresPermissions("userInfo:del")//权限管理;
-    public String userDel(){
-        return "userInfoDel";
+    @ResponseBody
+    public Map userDel(@RequestParam("ids[]")List<Integer> ids){
+        boolean b = iUserInfoService.deleteBatchIds(ids);
+        Map<String, Object> map = new HashMap<>();
+        map.put("success", b);
+        return map;
     }
 
-
-    @RequestMapping("/test")
-    public String test(){
-        return "test";
+    @ResponseBody
+    @RequestMapping("/getType")
+    public List getType(){
+        Map<String,Object> map = new HashMap();
+        map.put("available",1);
+        List<SysRole> sysRoles = sysRoleService.selectByMap(map);
+        return sysRoles;
     }
 }

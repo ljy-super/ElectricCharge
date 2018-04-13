@@ -27,6 +27,8 @@ public class UserInfo  {
 	@TableField("user_name")
 	private String userName; //账号.
 
+	private int type;
+
 	@TableField(exist=false)
 	private List<SysRole> roleList;// 一个用户具有多个角色
 
@@ -86,6 +88,18 @@ public class UserInfo  {
 		this.roleList = roleList;
 	}
 
+	public static long getSerialVersionUID() {
+		return serialVersionUID;
+	}
+
+	public int getType() {
+		return type;
+	}
+
+	public void setType(int type) {
+		this.type = type;
+	}
+
 	/**
 	 * 密码盐.
 	 * @return
@@ -101,12 +115,14 @@ public class UserInfo  {
 	@Override
 	public String toString() {
 		return "UserInfo{" +
-			"id=" + id +
-			", name=" + name +
-			", password=" + password +
-			", salt=" + salt +
-			", state=" + state +
-			", userName=" + userName +
-			"}";
+				"id=" + id +
+				", name='" + name + '\'' +
+				", password='" + password + '\'' +
+				", salt='" + salt + '\'' +
+				", state=" + state +
+				", userName='" + userName + '\'' +
+				", type=" + type +
+				", roleList=" + roleList +
+				'}';
 	}
 }

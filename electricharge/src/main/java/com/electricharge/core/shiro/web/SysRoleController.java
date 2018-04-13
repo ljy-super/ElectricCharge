@@ -25,4 +25,5 @@ public class SysRoleController {
 	public SysRole getRole(){
 	return     sysRoleService.selectRoleByIdWithPermission((long)1);
 	}
+
 }
