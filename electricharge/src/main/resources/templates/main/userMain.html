@@ -30,15 +30,16 @@
     <div class="panel-body form-group" style="margin-top:0px;">
         <label class="col-sm-1 control-label" style="text-align: right; margin-top:5px">账号：</label>
         <div class="col-sm-2">
-            <input type="text" class="form-control" name="dormitoryCode" id="dormitoryCode"/>
+            <input type="text" class="form-control" name="userCode" id="searchCode"/>
         </div>
         <label class="col-sm-1 control-label" style="text-align: right; margin-top:5px">姓名：</label>
         <div class="col-sm-2">
-            <input type="text" class="form-control" name="dormitoryCode" id="dormitoryCode"/>
+            <input type="text" class="form-control" name="userName" id="searchName"/>
         </div>
         <label class="col-sm-1 control-label" style="text-align: right; margin-top:5px">类型：</label>
         <div class="col-sm-2">
-            <select class="form-control" id="type" name="type" >
+            <select class="form-control" id="searchType" name="type" >
+                <option></option>
             </select>
         </div>
         <div class="col-sm-1 col-sm-offset-2">
@@ -98,7 +99,7 @@
                     </div>
                     <div class="form-group">
                         <label>类型</label>
-                        <select class="form-control" id="type" name="type" >
+                        <select class="form-control" id="type" name="type"  >
                         </select>
                     </div>
                 </form>
@@ -184,6 +185,8 @@
             if(data!=null){
                 for(var i=0;i<data.length;i++){
                     $('#type').append('<option value="' + data[i].id + '">' + data[i].description + '</option>');
+                    $('#searchType').append('<option value="' + data[i].id + '">' + data[i].description + '</option>');
+
                 }
             }
         }
@@ -250,11 +253,15 @@
         pageList: [10, 25, 50, 100],        //可供选择的每页的行数（*）
         ////查询参数,每次调用是会带上这个参数，可自定义
         queryParams : function(params) {
-         var dormitoryCode = $('#dormitoryCode').val();
+         var searchCode = $('#searchCode').val();
+         var searchName = $('#searchName').val();
+         var searchType = $('#searchType').val();
         return {
             current: params.offset/params.limit+1,
             size: params.limit,
-            dormitoryCode:dormitoryCode
+            searchCode:searchCode,
+            searchName:searchName,
+            searchType:searchType
         };
     },
 

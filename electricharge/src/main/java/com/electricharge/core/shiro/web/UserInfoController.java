@@ -59,9 +59,15 @@ public class UserInfoController {
     public Map userList(@RequestBody MySearch<UserInfo> myPage){
 
         Wrapper<UserInfo> wrapper=new EntityWrapper();
-//        if(myPage.getDormitoryCode()!=null&& myPage.getDormitoryCode().length()>0){
-//            wrapper.like("code",myPage.getDormitoryCode());
-//        }
+        if(myPage.getSearchCode()!=null&& myPage.getSearchCode().length()>0){
+            wrapper.like("user_name",myPage.getSearchCode());
+        }
+        if(myPage.getSearchName()!=null&& myPage.getSearchName().length()>0){
+            wrapper.like("name",myPage.getSearchName());
+        }
+        if(myPage.getSearchType()!=null&& myPage.getSearchType().length()>0){
+            wrapper.eq("type",myPage.getSearchType());
+        }
         iUserInfoService.selectPage(myPage,wrapper);
         Map<String, Object> map = new HashMap<>();
         map.put("rows", myPage.getRecords());
