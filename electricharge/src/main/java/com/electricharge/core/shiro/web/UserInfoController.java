@@ -85,6 +85,7 @@ public class UserInfoController {
             if(i>0){
                 Map<String, Object> map = new HashMap<>();
                 map.put("success", Boolean.FALSE);
+                map.put("msg", "存在该账号!");
                 return map;
             }
         }
@@ -110,7 +111,7 @@ public class UserInfoController {
         }
         SysRoleUser sysRoleUser=new SysRoleUser();
         sysRoleUser.setRoleId((long)userInfo.getType());
-        sysRoleUser.setUid(userInfo.getId());
+        sysRoleUser.setUid(id);
         iSysRoleUserService.insert(sysRoleUser);
         Map<String, Object> map = new HashMap<>();
         map.put("success", b);

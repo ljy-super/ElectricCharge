@@ -32,8 +32,9 @@ public class StudentController {
     @RequestMapping("getStudent")
     public Student getStudent( Long userId){
         Wrapper<Student> wrapper=new EntityWrapper();
-        wrapper.eq("userId",userId);
-       return iStudentService.selectOne(wrapper);
+        wrapper.eq("user_id",userId);
+        Student student = iStudentService.selectOne(wrapper);
+        return  student==null?new Student():student;
     }
     @ResponseBody
     @RequestMapping("save")
