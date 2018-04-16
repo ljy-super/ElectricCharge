@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import javax.servlet.Filter;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -42,10 +43,10 @@ public class ShiroConfiguration {
     public ShiroFilterFactoryBean shiroFilter(@Qualifier("securityManager") DefaultWebSecurityManager securityManager){
         System.out.println("ShiroConfiguration.shirFilter()");
         ShiroFilterFactoryBean shiroFilterFactoryBean  = new ShiroFilterFactoryBean();
-//        Map<String, Filter> filters = shiroFilterFactoryBean.getFilters();//获取filters
+        Map<String, Filter> filters = shiroFilterFactoryBean.getFilters();//获取filters
 //        filters.put("authc", new CustomFormAuthenticationFilter());//将自定义 的FormAuthenticationFilter注入shiroFilter中
         // 必须设置 SecurityManager
-//        filters.put("perms", new ShiroPermissionsFilter()); //对注解方式无效，仅对下方map配置有效
+        filters.put("perms", new ShiroPermissionsFilter()); //对注解方式无效，仅对下方map配置有效
         shiroFilterFactoryBean.setSecurityManager(securityManager);
 
 

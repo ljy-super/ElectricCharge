@@ -107,9 +107,9 @@
             </div>
             <div class="modal-body">
                 <form id="studentForm">
-                    <input id="userId" type="hidden" name="userId">
-                    <input id="dormitoryId" type="hidden" name="dormitoryId">
 
+                    <input id="userId" type="hidden" name="userId">
+                    <input id="studentId" type="hidden" name="id">
                     <div class="form-group">
                         <label for="userName" class="control-label">学生学号</label>
                         <input type="text" class="form-control" id="studentNum" name="studentNum">
@@ -125,12 +125,18 @@
                             <option>男</option>
                             <option>女</option>
                         </select>
+                        <div class="form-group">
+                            <label for="name" class="control-label">宿舍编号</label>
+                            <select class="form-control" id="dormitoryId" name="dormitoryId" >
+                            </select>
+                        </div>
+
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                <button type="button" class="btn btn-primary" onclick="save()">保存</button>
+                <button type="button" class="btn btn-primary" onclick="saveStudent()">保存</button>
             </div>
         </div>
     </div>
@@ -170,6 +176,23 @@
         }
     });
 
+
+
+    $.ajax({
+        type:'post',
+        url:"/dormitory/getAll",
+        cache: false,
+        dataType:'json',
+        success:function(data){
+            if(data!=null){
+                var list=data.list;
+                for(var i=0;i<list.length;i++){
+                    $('#dormitoryId').append('<option value="' + list[i].id + '">' + list[i].code + '</option>');
+                }
+            }
+        }
+    });
+
     $.extend($.fn.bootstrapTable.defaults, $.fn.bootstrapTable.locales['zh-CN']);
 
     $('#table').bootstrapTable({
@@ -196,7 +219,7 @@
             title: '编辑',
                 formatter:function(value, row, index){
                     if(row.type==3){
-                        return "  <button class=\"btn btn-primary\" id=\"search_btn\" onclick='openStudentModal()'>编辑学生资料</button>"
+                        return "<button class=\"btn btn-primary\" id=\"search_btn\" onclick='openStudentModal("+row.id+")'>编辑学生资料</button>"
                     }
                 }
         } ],
@@ -249,7 +272,7 @@
             $("#id").val(rows[0].id);
             $("#name").val(rows[0].name);
             $("#userName").val(rows[0].userName);
-            $("#password").val(rows[0].password);
+            // $("#password").val(rows[0].password);
             $("#userName").attr("readonly",true);
             $("#type").val(rows[0].type);
 
@@ -370,9 +393,69 @@
             }
         }
 
-        function openStudentModal(){
+        function openStudentModal(id){
+            alert(1);
+            var targetUrl='/student/getStudent';
+            $("#studentForm")[0].reset();
+            $("#userId").val(id);
+            $.ajax({
+                type:'get',
+                url:targetUrl,
+                cache: false,
+                data:{"userId":id},
+                dataType:'json',
+                contentType: 'application/json;charset=utf-8',
+                success:function(data){
+                    if(data!=null){
+                      console.log(data);
+                        $("#studentId").val(data.id);
+
+                        $("#studentNum").val(data.studentNum);
+                        $("#studentClass").val(data.studentClass);
+                        $("#studentSex").val(data.studentSex);
+                        $("#dormitoryId").val(data.dormitoryId);
+                     }
+                },
+                error:function(){
+                    Modal.alert({
+                        msg:"请求失败"
+                    });
+                }
+            });
         $("#studentModal").modal('show');
         }
+
+    function saveStudent() {
+
+        var targetUrl='/student/save';
+        var data = $("#studentForm").serialize();
+        $.ajax({
+            type:'post',
+            url:targetUrl,
+            cache: false,
+            data:data,
+            dataType:'json',
+            success:function(data){
+                if(data!=null&&data.success==true){
+                    Modal.alert({
+                        msg:"保存成功"
+                    });
+                }else{
+                    Modal.alert({
+                        msg:"保存失败"
+                    });
+                }
+                // $('#myModal').modal('hide');
+                // $('#table').bootstrapTable('refresh');
+                $("#studentModal").modal('hide');
+            },
+            error:function(){
+                Modal.alert({
+                    msg:"请求失败"
+                });
+            }
+        });
+    }
 
 </script>
 </html>

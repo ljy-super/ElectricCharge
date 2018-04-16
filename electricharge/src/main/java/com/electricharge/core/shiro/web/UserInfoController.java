@@ -78,6 +78,16 @@ public class UserInfoController {
     @RequiresPermissions("userInfo:save")//权限管理;
     @ResponseBody
     public Map userInfoAdd(UserInfo userInfo){
+        Wrapper<UserInfo> wrapper=new EntityWrapper();
+        wrapper.eq("user_name",userInfo.getUserName());
+        if(userInfo.getId()==null){
+            int i = iUserInfoService.selectCount(wrapper);
+            if(i>0){
+                Map<String, Object> map = new HashMap<>();
+                map.put("success", Boolean.FALSE);
+                return map;
+            }
+        }
         try {
             String s = MyUtils.getMd5Syr(userInfo.getPassword());
             userInfo.setPassword(s);
@@ -85,17 +95,23 @@ public class UserInfoController {
             e.printStackTrace();
         }
         boolean b = iUserInfoService.insertOrUpdate(userInfo);
-        iUserInfoService.
         if(userInfo.getId()!=null){
             Map<String,Object> map = new HashMap();
             map.put("uid",userInfo.getId());
             iSysRoleUserService.deleteByMap(map);
         }
-        SysRoleUser sysRoleUser=new SysRoleUser();
-        sysRoleUser.setRoleId(userInfo.getId());
-        sysRoleUser.setRoleId(userInfo.getId());
 
-        iSysRoleUserService
+        Long id = null;
+        if(userInfo.getId()==null){
+            Integer o = (Integer) iUserInfoService.selectObj(wrapper);
+            id=(long)o;
+        }else{
+            id=userInfo.getId();
+        }
+        SysRoleUser sysRoleUser=new SysRoleUser();
+        sysRoleUser.setRoleId((long)userInfo.getType());
+        sysRoleUser.setUid(userInfo.getId());
+        iSysRoleUserService.insert(sysRoleUser);
         Map<String, Object> map = new HashMap<>();
         map.put("success", b);
         return map;
@@ -123,4 +139,5 @@ public class UserInfoController {
         List<SysRole> sysRoles = sysRoleService.selectByMap(map);
         return sysRoles;
     }
+
 }

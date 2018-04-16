@@ -34,7 +34,7 @@ public class DormitoryController extends BaseController {
     @Autowired
     IDormitoryService dormitoryServiceImpl;
 
-    @RequiresPermissions(" dormitory:view")//权限管理;
+    @RequiresPermissions("dormitory:view")//权限管理;
     @RequestMapping("main")
     public String  main(){
         return "main/dormitoryMain";
@@ -43,7 +43,7 @@ public class DormitoryController extends BaseController {
 
 
     @ResponseBody
-    @RequiresPermissions(" dormitory:list")//权限管理;
+    @RequiresPermissions("dormitory:list")//权限管理;
     @RequestMapping("getDormitoryList")
     public Map  getDormitoryList(@RequestBody MySearch<Dormitory> myPage){
         Wrapper<Dormitory> wrapper=new EntityWrapper();
@@ -58,7 +58,7 @@ public class DormitoryController extends BaseController {
     }
 
     @ResponseBody
-    @RequiresPermissions(" dormitory:save")//权限管理;
+    @RequiresPermissions("dormitory:save")//权限管理;
     @RequestMapping("saveDormitory")
     public Map saveDormitory(Dormitory dormitory){
         boolean b = dormitoryServiceImpl.insertOrUpdateAllColumn(dormitory);
@@ -67,7 +67,7 @@ public class DormitoryController extends BaseController {
         return map;
     }
 
-    @RequiresPermissions(" dormitory:del")//权限管理;
+    @RequiresPermissions("dormitory:del")//权限管理;
     @ResponseBody
     @RequestMapping("delDormitory")
     public Map delDormitory(@RequestParam("ids[]")List<Integer> ids){
@@ -77,5 +77,17 @@ public class DormitoryController extends BaseController {
         map.put("success", b);
         return map;
     }
+
+    @RequiresPermissions(" dormitory:all")//权限管理;
+    @ResponseBody
+    @RequestMapping("getAll")
+    public Map getAllDormitory(){
+        List<Dormitory> list = dormitoryServiceImpl.selectList(null);
+        Map<String, Object> map = new HashMap<>();
+        map.put("list", list);
+        return map;
+    }
+
+
 }
 

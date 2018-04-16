@@ -136,8 +136,10 @@ public class MyShiroRealm extends AuthorizingRealm {
         for(SysRole role:userInfo.getRoleList()){
             authorizationInfo.addRole(role.getRole());//添加角色
             SysRole sysRole = sysRoleService.selectRoleByIdWithPermission(role.getId());//获取角色
-            for(SysPermission p:sysRole.getPermissions()){
-                authorizationInfo.addStringPermission(p.getPermission());//添加权限
+            if(sysRole!=null&&sysRole.getPermissions()!=null){
+                for(SysPermission p:sysRole.getPermissions()){
+                    authorizationInfo.addStringPermission(p.getPermission());//添加权限
+                }
             }
         }
 
